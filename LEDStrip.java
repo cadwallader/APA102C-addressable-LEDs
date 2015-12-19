@@ -31,7 +31,7 @@ public class LEDStrip {
 
     public boolean emptyFrame(){
         byte[] cmd = new byte[4];
-        Arrays.fill(cmd, (byte)0x00);//Fill Start Frame and Pololu End Frame
+        Arrays.fill(cmd, (byte)0x00);
         cmd[0] = (byte)0xE0;
         return true;
     }
@@ -49,6 +49,17 @@ public class LEDStrip {
         cmd[2]=rgb;//Green
         rgb = (byte)random.nextInt(256);
         cmd[3]=rgb;//Red
+        return true;
+    }
+
+    public boolean writeFrame(byte l, byte r, byte g, byte b){
+        byte[] cmd = new byte[4];//Create Array of bytes
+        Arrays.fill(cmd, (byte)0x00);//Fill Start Frame and Pololu End Frame
+        byte head = (byte)0xE0;//Set head to 11100000
+        cmd[0]=(byte)(l | head);//Header plus Brightness
+        cmd[1]=b;//Blue
+        cmd[2]=g;//Green
+        cmd[3]=r;//Red
         return true;
     }
 
@@ -93,29 +104,6 @@ public class LEDStrip {
         return true;
     }
     
-    //Tests first 3 lights in strip using previously successful code
-    /*
-    public boolean test() {
-        byte[] cmd = new byte[17];
-        cmd[0] = cmd[1] = cmd[2] = cmd[3] = (byte)0x00;
-        cmd[4] = cmd[5] = (byte)0xF0;
-        cmd[6] = cmd[7] = (byte)0x00;
-        cmd[8] = (byte)0xFF;
-        cmd[9] = (byte)0x00;
-        cmd[10] = (byte)0x00;
-        cmd[11] = (byte)0xFF;
-        cmd[12] = (byte)0xFF;
-        cmd[13] = (byte)0x00;
-        cmd[14] = (byte)0xFF;
-        cmd[15] = (byte)0x00;
-        cmd[16] = (byte)0x00;
-        
-        if (spi.write(cmd, cmd.length) != cmd.length) {
-            return false; // WRITE ERROR
-        }
-        return true;
-    }
-    */
     public boolean test() {
     	byte[] cmd = new byte[cmdsize];//Create Array of bytes
     	Arrays.fill(cmd, (byte)0x00);//Fill Start Frame and Pololu End Frame
