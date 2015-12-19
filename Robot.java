@@ -29,8 +29,11 @@ public class Robot extends SampleRobot {
      */
     public void operatorControl() {
        while (isOperatorControl() && isEnabled()) {
-            strip.write();
-            Timer.delay(.5);
+            strip.startFrame();
+            for(int i=1 ; i<=120 ; i++){
+                strip.randomFrame();
+            }
+            Timer.delay(.1);
         }
     }
 
