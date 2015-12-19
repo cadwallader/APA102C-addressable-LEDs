@@ -12,10 +12,8 @@ import java.util.Arrays;
 public class LEDStrip {
 	SPI spi;
 	int bitrate = 4000000;
-	int striplength = 63;
-	//int cmdsize = (striplength+1)*4+(striplength-1)/16;//Using Pololu equation
-	int cmdsize = (striplength+1)*4;//Using datasheet (End Frame of 32 1s) 
-	
+	int striplength = 120;
+
 	LEDStrip(){
 		spi = new SPI(Port.kOnboardCS0);
         spi.setClockRate(bitrate);
@@ -24,6 +22,35 @@ public class LEDStrip {
         spi.setClockActiveLow();
         spi.setChipSelectActiveLow();
 	}
+
+    public boolean startFrame(){
+        byte[] header = new byte[4];
+        Arrays.fill(header, (byte)0x00);
+        return true;
+    }
+
+    public boolean emptyFrame(){
+        byte[] cmd = new byte[4];
+        Arrays.fill(cmd, (byte)0x00);//Fill Start Frame and Pololu End Frame
+        cmd[0] = (byte)0xE0;
+        return true;
+    }
+
+    public boolean randomFrame(){
+        byte[] cmd = new byte[4];//Create Array of bytes
+        Arrays.fill(cmd, (byte)0x00);//Fill Start Frame and Pololu End Frame
+        byte head = (byte)0xE0;//Set head to 11100000
+        Random random = new Random();
+        lum = (byte)0x01;
+        cmd[0] = (byte)(lum | head);//Header plus Brightness
+        rgb = (byte)random.nextInt(256);
+        cmd[1]=rgb;//Blue
+        rgb = (byte)random.nextInt(256);
+        cmd[2]=rgb;//Green
+        rgb = (byte)random.nextInt(256);
+        cmd[3]=rgb;//Red
+        return true;
+    }
 
     public boolean write() {
     	byte[] cmd = new byte[cmdsize];//Create Array of bytes
